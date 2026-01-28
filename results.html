@@ -2,39 +2,64 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Student Results – Leads Community School</title>
-<link rel="stylesheet" href="css/style.css">
+<title>Student Results - Leads Community School</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
 <style>
-.results-table { width:100%; border-collapse:collapse; margin:20px 0; }
-.results-table th, .results-table td { border:1px solid #ccc; padding:10px; text-align:left; }
-.results-table th { background:#0b5e2a; color:white; }
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6f9;margin:0;padding:0;}
+header{background:#0b5e2a;color:white;padding:20px;text-align:center;}
+.container{padding:40px; max-width:900px;margin:auto;}
+h2{color:#0b5e2a;margin-bottom:20px;text-align:center;}
+table{width:100%;border-collapse:collapse;background:white;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.2);}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd;}
+th{background:#0b5e2a;color:white;}
+tr:hover{background:#f5f5f5;}
+.add-result{margin-bottom:30px;background:white;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.2);}
+input,button{padding:10px;margin:5px 0;border-radius:10px;border:1px solid #ccc;}
+button{background:#0b5e2a;color:white;border:none;cursor:pointer;border-radius:30px;width:100%;}
+button:hover{transform:scale(1.05);}
+.logout{background:#f5b400;color:black;float:right;margin-top:-50px;padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
 </style>
 </head>
 <body>
 
 <header>
-<h2>Leads Community School – Student Results</h2>
-<nav>
-<a href="index.html">Home</a>
-<a href="results.html">Results</a>
-</nav>
+<h2>Student Results</h2>
+<button class="logout" id="logoutBtn">Logout</button>
 </header>
 
-<section>
-<h2>Results</h2>
-<table class="results-table" id="resultsTable">
-<tr><th>Name</th><th>Class</th><th>Result</th></tr>
-</table>
-</section>
+<div class="container">
 
-<footer>
-<p>© 2026 Leads Community School</p>
-</footer>
+<!-- Admin Add Result -->
+<div class="add-result">
+<h3>Add Student Result</h3>
+<input type="text" id="studentName" placeholder="Student Name" required>
+<input type="text" id="subject" placeholder="Subject" required>
+<input type="text" id="score" placeholder="Score / Grade" required>
+<button id="addResultBtn">Add Result</button>
+</div>
+
+<!-- Display Results -->
+<h3>All Results</h3>
+<table id="resultsTable">
+<thead>
+<tr>
+<th>Student</th>
+<th>Subject</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<!-- Results will load dynamically -->
+</tbody>
+</table>
+
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAD5Z3CXC8JvQVYhdxn5xbgLJ3WfIl_MZ4",
@@ -46,21 +71,51 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-const table = document.getElementById("resultsTable");
+const logoutBtn = document.getElementById("logoutBtn");
+const resultsTable = document.getElementById("resultsTable").querySelector("tbody");
 
+// Redirect if not logged in
+onAuthStateChanged(auth, user=>{
+  if(!user) window.location.href="login.html";
+});
+
+// Logout
+logoutBtn.addEventListener("click", ()=>{
+  signOut(auth).then(()=>window.location.href="index.html");
+});
+
+// Add Result
+document.getElementById("addResultBtn").addEventListener("click", async ()=>{
+  const student = document.getElementById("studentName").value;
+  const subject = document.getElementById("subject").value;
+  const score = document.getElementById("score").value;
+
+  if(student && subject && score){
+    await addDoc(collection(db,"results"), { student, subject, score });
+    alert("Result added!");
+    document.getElementById("studentName").value="";
+    document.getElementById("subject").value="";
+    document.getElementById("score").value="";
+    loadResults(); // reload table
+  }
+});
+
+// Load results from Firebase
 async function loadResults(){
-  const q = query(collection(db,"student_results"), orderBy("timestamp","desc"));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(doc=>{
+  resultsTable.innerHTML = "";
+  const querySnapshot = await getDocs(collection(db,"results"));
+  querySnapshot.forEach(doc=>{
     const data = doc.data();
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${data.name}</td><td>${data.class}</td><td>${data.result}</td>`;
-    table.appendChild(tr);
+    tr.innerHTML = `<td>${data.student}</td><td>${data.subject}</td><td>${data.score}</td>`;
+    resultsTable.appendChild(tr);
   });
 }
 
+// Initial load
 loadResults();
 </script>
 
