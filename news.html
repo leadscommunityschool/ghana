@@ -1,15 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<title>News - Leads Community School</title>
 <link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.news-grid {max-width:800px;margin:20px auto;}
+.news-card {border:1px solid #ccc;border-radius:10px;padding:15px;margin:10px 0;background:#f9f9f9;}
+</style>
 </head>
 <body>
 
-<header><h2>News</h2></header>
+<header>
+<h1 style="text-align:center;">Latest News</h1>
+<nav style="text-align:center;margin-bottom:20px;">
+  <a href="index.html">Home</a> |
+  <a href="login.html">Admin Login</a>
+</nav>
+</header>
 
-<section>
-<p>School News Updates</p>
+<section class="news-grid" id="newsContainer">
+  <!-- News will load dynamically -->
 </section>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAD5Z3CXC8JvQVYhdxn5xbgLJ3WfIl_MZ4",
+  authDomain: "leadscommunityschool-8570e.firebaseapp.com",
+  projectId: "leadscommunityschool-8570e",
+  storageBucket: "leadscommunityschool-8570e.appspot.com",
+  messagingSenderId: "690085434671",
+  appId: "1:690085434671:web:48bfbbac17928aad5f3dda"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadNews() {
+  const container = document.getElementById('newsContainer');
+  container.innerHTML = '';
+  const snapshot = await getDocs(collection(db, "news"));
+  snapshot.forEach(doc=>{
+    const div = document.createElement('div');
+    div.classList.add('news-card');
+    div.textContent = doc.data().title;
+    container.appendChild(div);
+  });
+}
+
+loadNews();
+</script>
 
 </body>
 </html>
