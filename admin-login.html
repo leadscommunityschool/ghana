@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login – Leads Community School</title>
+<link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<section class="principal" style="max-width:400px;margin:50px auto;text-align:center;">
+<h2>Admin Login</h2>
+
+<input type="email" id="email" placeholder="Email" required>
+<input type="password" id="password" placeholder="Password" required>
+<button class="btn" id="loginBtn">Login</button>
+
+<p id="message" style="color:red;margin-top:10px;"></p>
+
+</section>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+
+// ======= Replace with your Firebase config =======
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+// ===============================================
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// LOGIN FUNCTION
+const loginBtn = document.getElementById('loginBtn');
+const message = document.getElementById('message');
+
+loginBtn.addEventListener('click', () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        // Login success → redirect to admin dashboard
+        window.location.href = "admin.html";
+    })
+    .catch((error) => {
+        message.textContent = error.message;
+    });
+});
+</script>
+
+</body>
+</html>
