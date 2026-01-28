@@ -6,67 +6,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.css">
 <style>
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6f9;margin:0;padding:0;}
+body{background:#f4f6f9;font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;}
 header{background:#0b5e2a;color:white;padding:20px;text-align:center;}
-.dashboard{padding:30px;}
-.dashboard h2{text-align:center;margin-bottom:20px;}
-.dashboard-section{background:white;padding:20px;margin:20px 0;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.12);}
-.dashboard-section h3{margin-bottom:10px;}
-input, textarea{width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid #ccc;}
-button{background:#0b5e2a;color:white;padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
-button:hover{background:#12753b;}
-.logout{position:absolute;top:20px;right:20px;background:#f5b400;color:black;padding:8px 16px;border:none;border-radius:10px;cursor:pointer;}
+.container{padding:40px;}
+h2{color:#0b5e2a;margin-bottom:20px;}
+.card{background:white;padding:20px;margin-bottom:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.2);}
+input, textarea, button{width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid #ccc;}
+button{background:#0b5e2a;color:white;border:none;cursor:pointer;border-radius:30px;}
+button:hover{transform:scale(1.05);}
+.logout{background:#f5b400;color:black;float:right;margin-top:-50px;padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
 </style>
 </head>
 <body>
 
 <header>
-<h1>Admin Dashboard</h1>
+<h2>Admin Dashboard</h2>
 <button class="logout" id="logoutBtn">Logout</button>
 </header>
 
-<div class="dashboard">
-
-<!-- Upload News -->
-<div class="dashboard-section">
-<h3>Upload News</h3>
+<div class="container">
+<h3>Add News</h3>
+<div class="card">
 <input type="text" id="newsTitle" placeholder="News Title">
-<textarea id="newsContent" placeholder="News Content"></textarea>
-<button id="uploadNewsBtn">Upload News</button>
+<button id="addNews">Add News</button>
 </div>
 
-<!-- Upload Events -->
-<div class="dashboard-section">
-<h3>Upload Events</h3>
+<h3>Add Event</h3>
+<div class="card">
 <input type="text" id="eventTitle" placeholder="Event Title">
-<textarea id="eventContent" placeholder="Event Content"></textarea>
-<button id="uploadEventBtn">Upload Event</button>
+<button id="addEvent">Add Event</button>
 </div>
 
-<!-- Upload Photos -->
-<div class="dashboard-section">
-<h3>Upload Photos</h3>
-<input type="file" id="photoFile">
-<button id="uploadPhotoBtn">Upload Photo</button>
+<h3>Add Testimonial</h3>
+<div class="card">
+<input type="text" id="testimonialTitle" placeholder="Testimonial">
+<button id="addTestimonial">Add Testimonial</button>
+</div>
 </div>
 
-<!-- Upload Results -->
-<div class="dashboard-section">
-<h3>Upload Results</h3>
-<input type="text" id="studentName" placeholder="Student Name">
-<input type="text" id="studentClass" placeholder="Class">
-<input type="text" id="studentResult" placeholder="Result/Grade">
-<button id="uploadResultBtn">Upload Result</button>
-</div>
-
-</div>
-
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAD5Z3CXC8JvQVYhdxn5xbgLJ3WfIl_MZ4",
@@ -80,62 +61,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
-// Check admin login
-onAuthStateChanged(auth, user => {
-  if(!user) window.location.href = "admin-login.html";
+// Redirect if not logged in
+onAuthStateChanged(auth, user=>{
+  if(!user) window.location.href="login.html";
 });
 
 // Logout
 document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  signOut(auth).then(()=>window.location.href="admin-login.html");
+  signOut(auth).then(()=>window.location.href="index.html");
 });
 
-// Upload News
-document.getElementById("uploadNewsBtn").addEventListener("click", async ()=>{
+// Add News
+document.getElementById("addNews").addEventListener("click", async ()=>{
   const title = document.getElementById("newsTitle").value;
-  const content = document.getElementById("newsContent").value;
-  if(title && content){
-    await addDoc(collection(db,"news"),{title,content,createdAt:new Date()});
-    alert("News uploaded successfully!"); document.getElementById("newsTitle").value=""; document.getElementById("newsContent").value="";
-  }
+  if(title) await addDoc(collection(db,"news"),{title});
+  document.getElementById("newsTitle").value="";
+  alert("News added!");
 });
 
-// Upload Events
-document.getElementById("uploadEventBtn").addEventListener("click", async ()=>{
+// Add Event
+document.getElementById("addEvent").addEventListener("click", async ()=>{
   const title = document.getElementById("eventTitle").value;
-  const content = document.getElementById("eventContent").value;
-  if(title && content){
-    await addDoc(collection(db,"events"),{title,content,createdAt:new Date()});
-    alert("Event uploaded successfully!"); document.getElementById("eventTitle").value=""; document.getElementById("eventContent").value="";
-  }
+  if(title) await addDoc(collection(db,"events"),{title});
+  document.getElementById("eventTitle").value="";
+  alert("Event added!");
 });
 
-// Upload Photos
-document.getElementById("uploadPhotoBtn").addEventListener("click", async ()=>{
-  const file = document.getElementById("photoFile").files[0];
-  if(file){
-    const storageRef = ref(storage, "photos/"+file.name);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
-    await addDoc(collection(db,"photos"),{url,createdAt:new Date()});
-    alert("Photo uploaded successfully!"); document.getElementById("photoFile").value="";
-  }
-});
-
-// Upload Results
-document.getElementById("uploadResultBtn").addEventListener("click", async ()=>{
-  const name = document.getElementById("studentName").value;
-  const cls = document.getElementById("studentClass").value;
-  const result = document.getElementById("studentResult").value;
-  if(name && cls && result){
-    await addDoc(collection(db,"results"),{name,cls,result,createdAt:new Date()});
-    alert("Result uploaded successfully!"); 
-    document.getElementById("studentName").value=""; 
-    document.getElementById("studentClass").value=""; 
-    document.getElementById("studentResult").value="";
-  }
+// Add Testimonial
+document.getElementById("addTestimonial").addEventListener("click", async ()=>{
+  const title = document.getElementById("testimonialTitle").value;
+  if(title) await addDoc(collection(db,"testimonials"),{title});
+  document.getElementById("testimonialTitle").value="";
+  alert("Testimonial added!");
 });
 </script>
 
