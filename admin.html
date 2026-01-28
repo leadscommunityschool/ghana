@@ -6,44 +6,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.css">
 <style>
-body{background:#f4f6f9;font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;}
-header{background:#0b5e2a;color:white;padding:20px;text-align:center;}
-.container{padding:40px;}
-h2{color:#0b5e2a;margin-bottom:20px;}
-.card{background:white;padding:20px;margin-bottom:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.2);}
-input, textarea, button{width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid #ccc;}
-button{background:#0b5e2a;color:white;border:none;cursor:pointer;border-radius:30px;}
-button:hover{transform:scale(1.05);}
-.logout{background:#f5b400;color:black;float:right;margin-top:-50px;padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
+body {font-family:sans-serif;background:#f9f9f9;margin:0;padding:0;}
+header {background:#083f1d;color:white;padding:15px;text-align:center;}
+.container {max-width:900px;margin:20px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,0.2);}
+.container h2 {margin-bottom:20px;}
+.container form {margin-bottom:30px;}
+.container input, .container textarea, .container select {width:100%;padding:10px;margin:10px 0;border-radius:5px;border:1px solid #ccc;}
+.container button {padding:10px 20px;background:#083f1d;color:white;border:none;border-radius:5px;cursor:pointer;}
+.container button:hover {background:#056524;}
+#logoutBtn {float:right;margin-top:-50px;background:#f5b400;color:black;}
 </style>
 </head>
 <body>
 
 <header>
-<h2>Admin Dashboard</h2>
-<button class="logout" id="logoutBtn">Logout</button>
+<h1>Admin Dashboard</h1>
+<button id="logoutBtn">Logout</button>
 </header>
 
 <div class="container">
-<h3>Add News</h3>
-<div class="card">
-<input type="text" id="newsTitle" placeholder="News Title">
-<button id="addNews">Add News</button>
+<h2>Add News</h2>
+<form id="newsForm">
+<input type="text" id="newsTitle" placeholder="News Title" required>
+<button type="submit">Add News</button>
+</form>
+
+<h2>Add Event</h2>
+<form id="eventForm">
+<input type="text" id="eventTitle" placeholder="Event Title" required>
+<button type="submit">Add Event</button>
+</form>
+
+<h2>Add Testimonial</h2>
+<form id="testimonialForm">
+<input type="text" id="testimonialTitle" placeholder="Testimonial" required>
+<button type="submit">Add Testimonial</button>
+</form>
+
+<h2>Add Student Result</h2>
+<form id="resultForm">
+<input type="text" id="studentName" placeholder="Student Name" required>
+<input type="text" id="subject" placeholder="Subject" required>
+<input type="text" id="score" placeholder="Score/Grade" required>
+<button type="submit">Add Result</button>
+</form>
 </div>
 
-<h3>Add Event</h3>
-<div class="card">
-<input type="text" id="eventTitle" placeholder="Event Title">
-<button id="addEvent">Add Event</button>
-</div>
-
-<h3>Add Testimonial</h3>
-<div class="card">
-<input type="text" id="testimonialTitle" placeholder="Testimonial">
-<button id="addTestimonial">Add Testimonial</button>
-</div>
-</div>
-
+<!-- FIREBASE AUTH + FIRESTORE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
@@ -62,38 +71,54 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Redirect if not logged in
-onAuthStateChanged(auth, user=>{
-  if(!user) window.location.href="login.html";
+const logoutBtn = document.getElementById("logoutBtn");
+
+onAuthStateChanged(auth, user => {
+  if(!user){
+    window.location.href = "login.html";
+  }
 });
 
-// Logout
-document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  signOut(auth).then(()=>window.location.href="index.html");
+logoutBtn.addEventListener("click", () => {
+  signOut(auth).then(()=> window.location.href="index.html");
 });
 
 // Add News
-document.getElementById("addNews").addEventListener("click", async ()=>{
+document.getElementById("newsForm").addEventListener("submit", async e => {
+  e.preventDefault();
   const title = document.getElementById("newsTitle").value;
-  if(title) await addDoc(collection(db,"news"),{title});
-  document.getElementById("newsTitle").value="";
+  await addDoc(collection(db,"news"), { title });
   alert("News added!");
+  e.target.reset();
 });
 
 // Add Event
-document.getElementById("addEvent").addEventListener("click", async ()=>{
+document.getElementById("eventForm").addEventListener("submit", async e => {
+  e.preventDefault();
   const title = document.getElementById("eventTitle").value;
-  if(title) await addDoc(collection(db,"events"),{title});
-  document.getElementById("eventTitle").value="";
+  await addDoc(collection(db,"events"), { title });
   alert("Event added!");
+  e.target.reset();
 });
 
 // Add Testimonial
-document.getElementById("addTestimonial").addEventListener("click", async ()=>{
+document.getElementById("testimonialForm").addEventListener("submit", async e => {
+  e.preventDefault();
   const title = document.getElementById("testimonialTitle").value;
-  if(title) await addDoc(collection(db,"testimonials"),{title});
-  document.getElementById("testimonialTitle").value="";
+  await addDoc(collection(db,"testimonials"), { title });
   alert("Testimonial added!");
+  e.target.reset();
+});
+
+// Add Result
+document.getElementById("resultForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = document.getElementById("studentName").value;
+  const subject = document.getElementById("subject").value;
+  const score = document.getElementById("score").value;
+  await addDoc(collection(db,"results"), { title:name, subject, score });
+  alert("Result added!");
+  e.target.reset();
 });
 </script>
 
