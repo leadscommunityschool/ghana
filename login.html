@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login - Leads Community School</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{display:flex;justify-content:center;align-items:center;height:100vh;background:#f4f6f9;}
+.login-box{background:white;padding:40px;border-radius:20px;box-shadow:0 5px 15px rgba(0,0,0,.2);width:300px;text-align:center;}
+.login-box input{width:100%;padding:12px;margin:10px 0;border-radius:10px;border:1px solid #ccc;}
+.login-box button{background:#0b5e2a;color:white;border:none;padding:12px 20px;border-radius:30px;cursor:pointer;width:100%;}
+.login-box button:hover{transform:scale(1.05);}
+h2{margin-bottom:20px;color:#0b5e2a;}
+</style>
+</head>
+<body>
+
+<div class="login-box">
+<h2>Admin Login</h2>
+<input type="email" id="email" placeholder="Email" required>
+<input type="password" id="password" placeholder="Password" required>
+<button id="loginBtn">Login</button>
+<p id="message" style="color:red;margin-top:10px;"></p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAD5Z3CXC8JvQVYhdxn5xbgLJ3WfIl_MZ4",
+  authDomain: "leadscommunityschool-8570e.firebaseapp.com",
+  projectId: "leadscommunityschool-8570e",
+  storageBucket: "leadscommunityschool-8570e.appspot.com",
+  messagingSenderId: "690085434671",
+  appId: "1:690085434671:web:48bfbbac17928aad5f3dda"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const loginBtn = document.getElementById("loginBtn");
+const message = document.getElementById("message");
+
+loginBtn.addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    window.location.href = "admin.html";
+  })
+  .catch((error) => {
+    message.textContent = "Invalid email or password";
+  });
+});
+</script>
+
+</body>
+</html>
