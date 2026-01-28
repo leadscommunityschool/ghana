@@ -2,54 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admissions – Leads Community School</title>
+<title>Admissions - Leads Community School</title>
 <link rel="stylesheet" href="css/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-
 <body>
 
-<header class="top-header">
-<h2>Leads Community School</h2>
-<nav>
-<a href="index.html">Home</a>
-<a href="contact.html">Contact</a>
-</nav>
+<header>
+<h1>Admissions</h1>
 </header>
 
-<section class="principal">
-<h2>Online Admission Form</h2>
-
-<form action="https://formsubmit.co/leadscommunityschool35@gmail.com" method="POST">
-
-<input type="hidden" name="_subject" value="New Admission Application">
-<input type="hidden" name="_captcha" value="false">
-<input type="hidden" name="_template" value="table">
-
-<input name="Student Name" placeholder="Student Full Name" required>
-
-<input name="Parent Name" placeholder="Parent / Guardian Name" required>
-
-<input name="Phone" placeholder="Phone Number" required>
-
-<input name="Email" placeholder="Email Address">
-
-<select name="Class" required>
-<option>Kindergarten</option>
-<option>Primary</option>
-<option>Junior High</option>
-</select>
-
-<textarea name="Message" placeholder="Additional Information"></textarea>
-
-<button type="submit" class="btn">Submit Application</button>
-
+<section class="principal reveal">
+<h2>Enroll Your Child</h2>
+<p>Fill out the form below to start your child's admission process.</p>
+<form action="#">
+  <input type="text" placeholder="Child Name" required><br><br>
+  <input type="text" placeholder="Parent Name" required><br><br>
+  <input type="email" placeholder="Parent Email" required><br><br>
+  <input type="tel" placeholder="Phone Number" required><br><br>
+  <select required>
+    <option value="">Select Class</option>
+    <option value="kindergarten">Kindergarten</option>
+    <option value="primary">Primary</option>
+    <option value="juniorhigh">Junior High</option>
+  </select><br><br>
+  <button>Submit</button>
 </form>
-
 </section>
 
 <footer>
-<p style="text-align:center;">© 2026 Leads Community School</p>
+<p>© 2026 Leads Community School</p>
 </footer>
 
 </body>
