@@ -113,25 +113,22 @@ We welcome you to Leads Community School where every child is nurtured to succee
 
 <section class="news reveal">
 <h2>Latest News</h2>
-<div class="news-grid">
-<div class="news-card">New Academic Term Begins</div>
-<div class="news-card">Inter School Competition</div>
+<div class="news-grid" id="newsContainer">
+  <!-- News will load dynamically from Firebase -->
 </div>
 </section>
 
 <section class="news reveal">
 <h2>Upcoming Events</h2>
-<div class="news-grid">
-<div class="news-card">PTA Meeting</div>
-<div class="news-card">Sports Day</div>
+<div class="news-grid" id="eventsContainer">
+  <!-- Events will load dynamically from Firebase -->
 </div>
 </section>
 
 <section class="news reveal">
 <h2>Parent Testimonials</h2>
-<div class="news-grid">
-<div class="news-card">Excellent teaching methods.</div>
-<div class="news-card">My child has improved greatly.</div>
+<div class="news-grid" id="testimonialsContainer">
+  <!-- Testimonials will load dynamically from Firebase -->
 </div>
 </section>
 
@@ -204,13 +201,17 @@ logoutBtn.addEventListener("click", () => {
 <!-- HERO SLIDER + Scroll Animation -->
 <script>
 let slides=document.querySelectorAll(".slide"),i=0;
-setInterval(()=>{slides[i].classList.remove("active");i=(i+1)%slides.length;slides[i].classList.add("active");},3000);
+setInterval(()=>{
+  slides[i].classList.remove("active");
+  i=(i+1)%slides.length;
+  slides[i].classList.add("active");
+},3000);
 
 window.addEventListener("scroll",()=>{
-document.getElementById("header").classList.toggle("sticky",window.scrollY>50);
-document.querySelectorAll(".reveal").forEach(el=>{
-if(el.getBoundingClientRect().top<window.innerHeight-100)el.classList.add("active");
-});
+  document.getElementById("header").classList.toggle("sticky",window.scrollY>50);
+  document.querySelectorAll(".reveal").forEach(el=>{
+    if(el.getBoundingClientRect().top<window.innerHeight-100)el.classList.add("active");
+  });
 });
 
 window.onload=()=>document.getElementById("loader").style.display="none";
