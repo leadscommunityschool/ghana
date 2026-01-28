@@ -6,60 +6,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.css">
 <style>
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f6f9;margin:0;padding:0;}
-header{background:#0b5e2a;color:white;padding:20px;text-align:center;}
-.container{padding:40px; max-width:900px;margin:auto;}
-h2{color:#0b5e2a;margin-bottom:20px;text-align:center;}
-table{width:100%;border-collapse:collapse;background:white;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.2);}
-th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd;}
-th{background:#0b5e2a;color:white;}
-tr:hover{background:#f5f5f5;}
-.add-result{margin-bottom:30px;background:white;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.2);}
-input,button{padding:10px;margin:5px 0;border-radius:10px;border:1px solid #ccc;}
-button{background:#0b5e2a;color:white;border:none;cursor:pointer;border-radius:30px;width:100%;}
-button:hover{transform:scale(1.05);}
-.logout{background:#f5b400;color:black;float:right;margin-top:-50px;padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
+body {font-family:sans-serif;background:#f9f9f9;margin:0;padding:0;}
+header {background:#083f1d;color:white;padding:15px;text-align:center;}
+.results-container {max-width:900px;margin:20px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,0.2);}
+.results-container h2 {margin-bottom:20px;text-align:center;}
+.result-card {padding:15px;margin:10px 0;border-radius:8px;border:1px solid #ccc;background:#f7f7f7;}
+.result-card p {margin:5px 0;}
 </style>
 </head>
 <body>
 
 <header>
-<h2>Student Results</h2>
-<button class="logout" id="logoutBtn">Logout</button>
+<h1>Student Results</h1>
 </header>
 
-<div class="container">
-
-<!-- Admin Add Result -->
-<div class="add-result">
-<h3>Add Student Result</h3>
-<input type="text" id="studentName" placeholder="Student Name" required>
-<input type="text" id="subject" placeholder="Subject" required>
-<input type="text" id="score" placeholder="Score / Grade" required>
-<button id="addResultBtn">Add Result</button>
+<div class="results-container" id="resultsContainer">
+<h2>Loading Results...</h2>
 </div>
 
-<!-- Display Results -->
-<h3>All Results</h3>
-<table id="resultsTable">
-<thead>
-<tr>
-<th>Student</th>
-<th>Subject</th>
-<th>Score</th>
-</tr>
-</thead>
-<tbody>
-<!-- Results will load dynamically -->
-</tbody>
-</table>
-
-</div>
-
+<!-- FIREBASE SDK + FIRESTORE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAD5Z3CXC8JvQVYhdxn5xbgLJ3WfIl_MZ4",
@@ -71,51 +39,32 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-const logoutBtn = document.getElementById("logoutBtn");
-const resultsTable = document.getElementById("resultsTable").querySelector("tbody");
+const resultsContainer = document.getElementById("resultsContainer");
+resultsContainer.innerHTML = '<h2>Loading Results...</h2>';
 
-// Redirect if not logged in
-onAuthStateChanged(auth, user=>{
-  if(!user) window.location.href="login.html";
-});
-
-// Logout
-logoutBtn.addEventListener("click", ()=>{
-  signOut(auth).then(()=>window.location.href="index.html");
-});
-
-// Add Result
-document.getElementById("addResultBtn").addEventListener("click", async ()=>{
-  const student = document.getElementById("studentName").value;
-  const subject = document.getElementById("subject").value;
-  const score = document.getElementById("score").value;
-
-  if(student && subject && score){
-    await addDoc(collection(db,"results"), { student, subject, score });
-    alert("Result added!");
-    document.getElementById("studentName").value="";
-    document.getElementById("subject").value="";
-    document.getElementById("score").value="";
-    loadResults(); // reload table
-  }
-});
-
-// Load results from Firebase
 async function loadResults(){
-  resultsTable.innerHTML = "";
-  const querySnapshot = await getDocs(collection(db,"results"));
+  resultsContainer.innerHTML = '';
+  const querySnapshot = await getDocs(collection(db,'results'));
+  if(querySnapshot.empty){
+    resultsContainer.innerHTML = '<h2>No Results Found</h2>';
+    return;
+  }
+
   querySnapshot.forEach(doc=>{
     const data = doc.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${data.student}</td><td>${data.subject}</td><td>${data.score}</td>`;
-    resultsTable.appendChild(tr);
+    const card = document.createElement('div');
+    card.classList.add('result-card');
+    card.innerHTML = `
+      <p><strong>Student Name:</strong> ${data.title || 'N/A'}</p>
+      <p><strong>Subject:</strong> ${data.subject || 'N/A'}</p>
+      <p><strong>Score/Grade:</strong> ${data.score || 'N/A'}</p>
+    `;
+    resultsContainer.appendChild(card);
   });
 }
 
-// Initial load
 loadResults();
 </script>
 
