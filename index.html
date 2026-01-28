@@ -10,23 +10,32 @@
 
 <link rel="stylesheet" href="css/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+html{scroll-behavior:smooth}
+.slide{display:none}
+.slide.active{display:flex}
+</style>
+
 </head>
 
 <body>
+
+<div id="loader"></div>
 
 <!-- TOP BAR -->
 <div style="background:#083f1d;color:white;padding:8px 5%;font-size:14px;">
 📞 +233 244 655 510 | ✉ leadscommunityschool35@gmail.com
 </div>
 
-<header class="top-header">
+<header class="top-header" id="header">
 
 <div style="display:flex;align-items:center;gap:10px;">
 <img src="images/logo.png" height="50">
 <h2>Leads Community School</h2>
 </div>
 
-<nav>
+<nav id="nav">
 <a href="index.html">Home</a>
 <a href="about.html">About</a>
 <a href="admissions.html">Admissions</a>
@@ -43,24 +52,14 @@
 <!-- HERO SLIDER -->
 
 <section class="hero slider">
-<div class="slide active">Training Future Leaders Today</div>
-<div class="slide">Quality GES Education</div>
-<div class="slide">Discipline • Excellence • Responsibility</div>
+<div class="slide active"><h1>Training Future Leaders Today</h1></div>
+<div class="slide"><h1>Quality GES Education</h1></div>
+<div class="slide"><h1>Discipline • Excellence • Responsibility</h1></div>
 </section>
-
-<script>
-let slides=document.querySelectorAll(".slide");
-let i=0;
-setInterval(()=>{
-slides[i].classList.remove("active");
-i=(i+1)%slides.length;
-slides[i].classList.add("active");
-},3000);
-</script>
 
 <!-- WELCOME -->
 
-<section class="about">
+<section class="about reveal">
 <h2>Welcome To Leads Community School</h2>
 <p>
 We provide quality education that develops academic excellence, character,
@@ -68,17 +67,13 @@ discipline and leadership skills in every child.
 </p>
 </section>
 
-<!-- VISION / MISSION -->
-
-<section class="cards">
+<section class="cards reveal">
 <div><h3>Our Vision</h3><p>To raise responsible future leaders.</p></div>
 <div><h3>Our Mission</h3><p>Providing holistic learning with strong moral values.</p></div>
 <div><h3>Core Values</h3><p>Discipline, Respect, Excellence, Responsibility.</p></div>
 </section>
 
-<!-- WHY CHOOSE US -->
-
-<section class="principal">
+<section class="principal reveal">
 <h2>Why Choose Us</h2>
 <ul>
 <li>GES Approved Curriculum</li>
@@ -89,9 +84,7 @@ discipline and leadership skills in every child.
 </ul>
 </section>
 
-<!-- PROGRAMS -->
-
-<section class="programs">
+<section class="programs reveal">
 <h2>Our Academic Programs</h2>
 <div class="program-grid">
 <div class="program-card"><h3>Kindergarten</h3></div>
@@ -100,27 +93,21 @@ discipline and leadership skills in every child.
 </div>
 </section>
 
-<!-- FACILITIES -->
-
-<section class="cards">
+<section class="cards reveal">
 <div><h3>Classrooms</h3></div>
 <div><h3>ICT Lab</h3></div>
 <div><h3>Library</h3></div>
 <div><h3>Playground</h3></div>
 </section>
 
-<!-- HEAD TEACHER -->
-
-<section class="principal">
+<section class="principal reveal">
 <h2>Message From Head Teacher</h2>
 <p>
 We welcome you to Leads Community School where every child is nurtured to succeed.
 </p>
 </section>
 
-<!-- NEWS -->
-
-<section class="news">
+<section class="news reveal">
 <h2>Latest News</h2>
 <div class="news-grid">
 <div class="news-card">New Academic Term Begins</div>
@@ -128,9 +115,7 @@ We welcome you to Leads Community School where every child is nurtured to succee
 </div>
 </section>
 
-<!-- EVENTS -->
-
-<section class="news">
+<section class="news reveal">
 <h2>Upcoming Events</h2>
 <div class="news-grid">
 <div class="news-card">PTA Meeting</div>
@@ -138,9 +123,7 @@ We welcome you to Leads Community School where every child is nurtured to succee
 </div>
 </section>
 
-<!-- TESTIMONIALS -->
-
-<section class="news">
+<section class="news reveal">
 <h2>Parent Testimonials</h2>
 <div class="news-grid">
 <div class="news-card">Excellent teaching methods.</div>
@@ -148,17 +131,13 @@ We welcome you to Leads Community School where every child is nurtured to succee
 </div>
 </section>
 
-<!-- NEWSLETTER -->
-
-<section class="principal">
+<section class="principal reveal">
 <h2>Subscribe To Our Newsletter</h2>
-<form>
-<input placeholder="Your Email">
+<form action="#">
+<input placeholder="Your Email" required>
 <button>Subscribe</button>
 </form>
 </section>
-
-<!-- MAP -->
 
 <section>
 <h2>Our Location</h2>
@@ -166,14 +145,10 @@ We welcome you to Leads Community School where every child is nurtured to succee
 width="100%" height="300"></iframe>
 </section>
 
-<!-- FINAL CTA -->
-
-<section class="principal" style="text-align:center;">
+<section class="principal reveal" style="text-align:center;">
 <h2>Enroll Your Child Today</h2>
 <a href="admissions.html" class="btn">Apply Now</a>
 </section>
-
-<!-- FOOTER -->
 
 <footer>
 <div class="footer-grid">
@@ -184,11 +159,22 @@ width="100%" height="300"></iframe>
 <p style="text-align:center;margin-top:20px;">© 2026 Leads Community School</p>
 </footer>
 
-<!-- WHATSAPP -->
 <a class="whatsapp" href="https://wa.me/233244655510">💬</a>
+<a href="#" id="top">⬆</a>
 
-<!-- BACK TO TOP -->
-<a href="#" style="position:fixed;bottom:80px;right:20px;">⬆</a>
+<script>
+let slides=document.querySelectorAll(".slide"),i=0;
+setInterval(()=>{slides[i].classList.remove("active");i=(i+1)%slides.length;slides[i].classList.add("active");},3000);
+
+window.addEventListener("scroll",()=>{
+document.getElementById("header").classList.toggle("sticky",window.scrollY>50);
+document.querySelectorAll(".reveal").forEach(el=>{
+if(el.getBoundingClientRect().top<window.innerHeight-100)el.classList.add("active");
+});
+});
+
+window.onload=()=>document.getElementById("loader").style.display="none";
+</script>
 
 </body>
 </html>
