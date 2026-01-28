@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Results – Leads Community School</title>
+<link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.results-table { width:100%; border-collapse:collapse; margin:20px 0; }
+.results-table th, .results-table td { border:1px solid #ccc; padding:10px; text-align:left; }
+.results-table th { background:#0b5e2a; color:white; }
+</style>
+</head>
+<body>
+
+<header>
+<h2>Leads Community School – Student Results</h2>
+<nav>
+<a href="index.html">Home</a>
+<a href="results.html">Results</a>
+</nav>
+</header>
+
+<section>
+<h2>Results</h2>
+<table class="results-table" id="resultsTable">
+<tr><th>Name</th><th>Class</th><th>Result</th></tr>
+</table>
+</section>
+
+<footer>
+<p>© 2026 Leads Community School</p>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAD5Z3CXC8JvQVYhdxn5xbgLJ3WfIl_MZ4",
+  authDomain: "leadscommunityschool-8570e.firebaseapp.com",
+  projectId: "leadscommunityschool-8570e",
+  storageBucket: "leadscommunityschool-8570e.appspot.com",
+  messagingSenderId: "690085434671",
+  appId: "1:690085434671:web:48bfbbac17928aad5f3dda"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const table = document.getElementById("resultsTable");
+
+async function loadResults(){
+  const q = query(collection(db,"student_results"), orderBy("timestamp","desc"));
+  const snapshot = await getDocs(q);
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${data.name}</td><td>${data.class}</td><td>${data.result}</td>`;
+    table.appendChild(tr);
+  });
+}
+
+loadResults();
+</script>
+
+</body>
+</html>
