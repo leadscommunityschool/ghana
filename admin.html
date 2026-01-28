@@ -3,59 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard - Leads Community School</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {font-family:sans-serif;background:#f9f9f9;margin:0;padding:0;}
-header {background:#083f1d;color:white;padding:15px;text-align:center;}
-.container {max-width:900px;margin:20px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,0.2);}
-.container h2 {margin-bottom:20px;}
-.container form {margin-bottom:30px;}
-.container input, .container textarea, .container select {width:100%;padding:10px;margin:10px 0;border-radius:5px;border:1px solid #ccc;}
-.container button {padding:10px 20px;background:#083f1d;color:white;border:none;border-radius:5px;cursor:pointer;}
-.container button:hover {background:#056524;}
-#logoutBtn {float:right;margin-top:-50px;background:#f5b400;color:black;}
+section {max-width:600px;margin:20px auto;padding:20px;border:1px solid #ccc;border-radius:10px;}
+input, textarea {width:100%;padding:10px;margin:10px 0;border-radius:5px;border:1px solid #ccc;}
+button {padding:10px 20px;background:#083f1d;color:white;border:none;border-radius:5px;cursor:pointer;}
+h2 {text-align:center;}
+.logout {text-align:center;margin-top:20px;}
 </style>
 </head>
 <body>
 
-<header>
-<h1>Admin Dashboard</h1>
-<button id="logoutBtn">Logout</button>
-</header>
+<header><h1 style="text-align:center;">Admin Dashboard</h1></header>
 
-<div class="container">
+<section>
 <h2>Add News</h2>
 <form id="newsForm">
-<input type="text" id="newsTitle" placeholder="News Title" required>
-<button type="submit">Add News</button>
+  <input type="text" id="newsTitle" placeholder="News Title" required>
+  <button type="submit">Add News</button>
 </form>
+</section>
 
+<section>
 <h2>Add Event</h2>
 <form id="eventForm">
-<input type="text" id="eventTitle" placeholder="Event Title" required>
-<button type="submit">Add Event</button>
+  <input type="text" id="eventTitle" placeholder="Event Title" required>
+  <button type="submit">Add Event</button>
 </form>
+</section>
 
+<section>
 <h2>Add Testimonial</h2>
 <form id="testimonialForm">
-<input type="text" id="testimonialTitle" placeholder="Testimonial" required>
-<button type="submit">Add Testimonial</button>
+  <input type="text" id="testimonialTitle" placeholder="Testimonial" required>
+  <button type="submit">Add Testimonial</button>
 </form>
+</section>
 
-<h2>Add Student Result</h2>
+<section>
+<h2>Add Result</h2>
 <form id="resultForm">
-<input type="text" id="studentName" placeholder="Student Name" required>
-<input type="text" id="subject" placeholder="Subject" required>
-<input type="text" id="score" placeholder="Score/Grade" required>
-<button type="submit">Add Result</button>
+  <input type="text" id="studentName" placeholder="Student Name" required>
+  <input type="text" id="resultText" placeholder="Result" required>
+  <button type="submit">Add Result</button>
 </form>
+</section>
+
+<div class="logout">
+<button id="logoutBtn">Logout</button>
 </div>
 
-<!-- FIREBASE AUTH + FIRESTORE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -71,54 +72,51 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const logoutBtn = document.getElementById("logoutBtn");
+const logoutBtn = document.getElementById('logoutBtn');
 
+// Redirect if not logged in
 onAuthStateChanged(auth, user => {
   if(!user){
     window.location.href = "login.html";
   }
 });
 
-logoutBtn.addEventListener("click", () => {
-  signOut(auth).then(()=> window.location.href="index.html");
-});
+// Logout
+logoutBtn.addEventListener("click", ()=>signOut(auth).then(()=>window.location.href="index.html"));
 
 // Add News
-document.getElementById("newsForm").addEventListener("submit", async e => {
+document.getElementById('newsForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const title = document.getElementById("newsTitle").value;
-  await addDoc(collection(db,"news"), { title });
-  alert("News added!");
+  await addDoc(collection(db, "news"), {title: document.getElementById('newsTitle').value});
   e.target.reset();
+  alert("News Added!");
 });
 
 // Add Event
-document.getElementById("eventForm").addEventListener("submit", async e => {
+document.getElementById('eventForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const title = document.getElementById("eventTitle").value;
-  await addDoc(collection(db,"events"), { title });
-  alert("Event added!");
+  await addDoc(collection(db, "events"), {title: document.getElementById('eventTitle').value});
   e.target.reset();
+  alert("Event Added!");
 });
 
 // Add Testimonial
-document.getElementById("testimonialForm").addEventListener("submit", async e => {
+document.getElementById('testimonialForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const title = document.getElementById("testimonialTitle").value;
-  await addDoc(collection(db,"testimonials"), { title });
-  alert("Testimonial added!");
+  await addDoc(collection(db, "testimonials"), {title: document.getElementById('testimonialTitle').value});
   e.target.reset();
+  alert("Testimonial Added!");
 });
 
 // Add Result
-document.getElementById("resultForm").addEventListener("submit", async e => {
+document.getElementById('resultForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const name = document.getElementById("studentName").value;
-  const subject = document.getElementById("subject").value;
-  const score = document.getElementById("score").value;
-  await addDoc(collection(db,"results"), { title:name, subject, score });
-  alert("Result added!");
+  await addDoc(collection(db, "results"), {
+    student: document.getElementById('studentName').value,
+    result: document.getElementById('resultText').value
+  });
   e.target.reset();
+  alert("Result Added!");
 });
 </script>
 
