@@ -2,29 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Student Results - Leads Community School</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results - Leads Community School</title>
 <link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {font-family:sans-serif;background:#f9f9f9;margin:0;padding:0;}
-header {background:#083f1d;color:white;padding:15px;text-align:center;}
-.results-container {max-width:900px;margin:20px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,0.2);}
-.results-container h2 {margin-bottom:20px;text-align:center;}
-.result-card {padding:15px;margin:10px 0;border-radius:8px;border:1px solid #ccc;background:#f7f7f7;}
-.result-card p {margin:5px 0;}
+.results-container {max-width:800px;margin:20px auto;}
+.result-card {border:1px solid #ccc;border-radius:10px;padding:15px;margin:10px 0;background:#f9f9f9;}
 </style>
 </head>
 <body>
 
 <header>
-<h1>Student Results</h1>
+<h1 style="text-align:center;">Student Results</h1>
+<nav style="text-align:center;margin-bottom:20px;">
+  <a href="index.html">Home</a> |
+  <a href="login.html">Admin Login</a>
+</nav>
 </header>
 
-<div class="results-container" id="resultsContainer">
-<h2>Loading Results...</h2>
-</div>
+<section class="results-container" id="resultsContainer">
+  <!-- Results will load dynamically -->
+</section>
 
-<!-- FIREBASE SDK + FIRESTORE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
@@ -41,27 +40,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const resultsContainer = document.getElementById("resultsContainer");
-resultsContainer.innerHTML = '<h2>Loading Results...</h2>';
-
-async function loadResults(){
-  resultsContainer.innerHTML = '';
-  const querySnapshot = await getDocs(collection(db,'results'));
-  if(querySnapshot.empty){
-    resultsContainer.innerHTML = '<h2>No Results Found</h2>';
-    return;
-  }
-
-  querySnapshot.forEach(doc=>{
-    const data = doc.data();
-    const card = document.createElement('div');
-    card.classList.add('result-card');
-    card.innerHTML = `
-      <p><strong>Student Name:</strong> ${data.title || 'N/A'}</p>
-      <p><strong>Subject:</strong> ${data.subject || 'N/A'}</p>
-      <p><strong>Score/Grade:</strong> ${data.score || 'N/A'}</p>
-    `;
-    resultsContainer.appendChild(card);
+async function loadResults() {
+  const container = document.getElementById('resultsContainer');
+  container.innerHTML = '';
+  const snapshot = await getDocs(collection(db, "results"));
+  snapshot.forEach(doc=>{
+    const div = document.createElement('div');
+    div.classList.add('result-card');
+    div.innerHTML = `<strong>${doc.data().student}</strong><br>${doc.data().result}`;
+    container.appendChild(div);
   });
 }
 
