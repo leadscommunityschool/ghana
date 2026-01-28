@@ -1,19 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<title>Admissions – Leads Community School</title>
 <link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body>
 
-<header><h2>Admissions</h2></header>
+<header class="top-header">
+<h2>Leads Community School</h2>
+<nav>
+<a href="index.html">Home</a>
+<a href="contact.html">Contact</a>
+</nav>
+</header>
 
-<section>
-<ul>
-<li>Admission Requirements</li>
-<li>Fees Structure</li>
-<li>Online Application</li>
-</ul>
+<section class="principal">
+<h2>Online Admission Form</h2>
+
+<form action="https://formsubmit.co/leadscommunityschool35@gmail.com" method="POST">
+
+<input type="hidden" name="_subject" value="New Admission Application">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_template" value="table">
+
+<input name="Student Name" placeholder="Student Full Name" required>
+
+<input name="Parent Name" placeholder="Parent / Guardian Name" required>
+
+<input name="Phone" placeholder="Phone Number" required>
+
+<input name="Email" placeholder="Email Address">
+
+<select name="Class" required>
+<option>Kindergarten</option>
+<option>Primary</option>
+<option>Junior High</option>
+</select>
+
+<textarea name="Message" placeholder="Additional Information"></textarea>
+
+<button type="submit" class="btn">Submit Application</button>
+
+</form>
+
 </section>
+
+<footer>
+<p style="text-align:center;">© 2026 Leads Community School</p>
+</footer>
 
 </body>
 </html>
